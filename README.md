@@ -1,4 +1,4 @@
-# TEST3_CASSIAMassimiliano
+# TEST3_CASSIAMassimiliano 11/07/2025
 Test 3 11/07/2025
 
 # Sistema E-commerce con Design Patterns
@@ -231,17 +231,3 @@ Utilizzato per fornire un'interfaccia semplificata alle operazioni complesse del
 - **Observer**: Notifiche automatiche e disaccoppiate
 - **Singleton**: Garantisce coerenza dati globali
 - **Facade**: Semplifica interfaccia complessa
-
-### Limitazioni Attuali
-- Persistenza dati solo in memoria
-- Autenticazione semplificata
-- Interfaccia solo console
-- Gestione errori basica
-
-### Possibili Miglioramenti
-- Persistenza su database
-- Interfaccia grafica
-- Crittografia password
-- Gestione sessioni
-- Validazione input più robusta
-- Logging delle operazioni
