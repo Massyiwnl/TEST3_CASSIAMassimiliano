@@ -2,177 +2,178 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-// ================ STRATEGY PATTERN ================
-interface PaymentStrategy {
-    boolean processPayment(double amount);
-    String getPaymentMethod();
+// ================ PATTERN STRATEGIA ================
+interface StrategiaPagamento {
+    boolean elaboraPagamento(double importo);
+    String getMetodoPagamento();
 }
 
-class CreditCardPayment implements PaymentStrategy {
-    private String cardNumber;
+class PagamentoCartaCredito implements StrategiaPagamento {
+    private String numeroCarta;
     
-    public CreditCardPayment(String cardNumber) {
-        this.cardNumber = cardNumber;
+    public PagamentoCartaCredito(String numeroCarta) {
+        this.numeroCarta = numeroCarta;
     }
     
     @Override
-    public boolean processPayment(double amount) {
-        System.out.println("Pagamento di euro" + amount + " elaborato con carta di credito: " + cardNumber);
+    public boolean elaboraPagamento(double importo) {
+        System.out.println("Pagamento di €" + importo + " elaborato con carta di credito: " + numeroCarta);
         return true;
     }
     
     @Override
-    public String getPaymentMethod() {
+    public String getMetodoPagamento() {
         return "Carta di Credito";
     }
 }
 
-class PayPalPayment implements PaymentStrategy {
+class PagamentoPayPal implements StrategiaPagamento {
     private String email;
     
-    public PayPalPayment(String email) {
+    public PagamentoPayPal(String email) {
         this.email = email;
     }
     
     @Override
-    public boolean processPayment(double amount) {
-        System.out.println("Pagamento di euro" + amount + " elaborato con PayPal: " + email);
+    public boolean elaboraPagamento(double importo) {
+        System.out.println("Pagamento di €" + importo + " elaborato con PayPal: " + email);
         return true;
     }
     
     @Override
-    public String getPaymentMethod() {
+    public String getMetodoPagamento() {
         return "PayPal";
     }
 }
 
-interface ShippingStrategy {
-    double calculateShippingCost(double orderTotal);
-    String getShippingMethod();
-    int getDeliveryDays();
+interface StrategiaSpedizione {
+    double calcolaCostoSpedizione(double totaleOrdine);
+    String getMetodoSpedizione();
+    int getGiorniConsegna();
 }
 
-class StandardShipping implements ShippingStrategy {
+class SpedizioneStandard implements StrategiaSpedizione {
     @Override
-    public double calculateShippingCost(double orderTotal) {
-        return orderTotal > 50 ? 0 : 5.99;
+    public double calcolaCostoSpedizione(double totaleOrdine) {
+        return totaleOrdine > 50 ? 0 : 5.99;
     }
     
     @Override
-    public String getShippingMethod() {
+    public String getMetodoSpedizione() {
         return "Spedizione Standard";
     }
     
     @Override
-    public int getDeliveryDays() {
+    public int getGiorniConsegna() {
         return 5;
     }
 }
 
-class ExpressShipping implements ShippingStrategy {
+class SpedizioneExpress implements StrategiaSpedizione {
     @Override
-    public double calculateShippingCost(double orderTotal) {
+    public double calcolaCostoSpedizione(double totaleOrdine) {
         return 12.99;
     }
     
     @Override
-    public String getShippingMethod() {
+    public String getMetodoSpedizione() {
         return "Spedizione Express";
     }
     
     @Override
-    public int getDeliveryDays() {
+    public int getGiorniConsegna() {
         return 2;
     }
 }
 
-// ================ DECORATOR PATTERN ================
-abstract class ClothingItem {
+// ================ PATTERN DECORATORE ================
+abstract class ArticoloAbbigliamento {
     protected String id;
-    protected String name;
-    protected String type;
-    protected double price;
+    protected String nome;
+    protected String tipo;
+    protected double prezzo;
     
-    public ClothingItem(String id, String name, String type, double price) {
+    public ArticoloAbbigliamento(String id, String nome, String tipo, double prezzo) {
         this.id = id;
-        this.name = name;
-        this.type = type;
-        this.price = price;
+        this.nome = nome;
+        this.tipo = tipo;
+        this.prezzo = prezzo;
     }
     
-    public abstract double getPrice();
-    public abstract String getDescription();
+    public abstract double getPrezzo();
+    public abstract String getDescrizione();
     
     public String getId() { return id; }
-    public String getName() { return name; }
-    public String getType() { return type; }
-    public double getBasePrice() { return price; }
+    public String getNome() { return nome; }
+    public String getTipo() { return tipo; }
+    public double getPrezzoBase() { return prezzo; }
 }
 
-class BasicClothingItem extends ClothingItem {
-    public BasicClothingItem(String id, String name, String type, double price) {
-        super(id, name, type, price);
+class ArticoloAbbigliamentoBase extends ArticoloAbbigliamento {
+    public ArticoloAbbigliamentoBase(String id, String nome, String tipo, double prezzo) {
+        super(id, nome, tipo, prezzo);
     }
     
     @Override
-    public double getPrice() {
-        return price;
+    public double getPrezzo() {
+        return prezzo;
     }
     
     @Override
-    public String getDescription() {
-        return name + " (" + type + ")";
+    public String getDescrizione() {
+        return nome + " (" + tipo + ")";
     }
 }
 
-abstract class ClothingDecorator extends ClothingItem {
-    protected ClothingItem clothingItem;
+abstract class DecoratoreAbbigliamento extends ArticoloAbbigliamento {
+    protected ArticoloAbbigliamento articoloAbbigliamento;
     
-    public ClothingDecorator(ClothingItem clothingItem) {
-        super(clothingItem.getId(), clothingItem.getName(), clothingItem.getType(), clothingItem.getBasePrice());
-        this.clothingItem = clothingItem;
+    public DecoratoreAbbigliamento(ArticoloAbbigliamento articoloAbbigliamento) {
+        super(articoloAbbigliamento.getId(), articoloAbbigliamento.getNome(), 
+              articoloAbbigliamento.getTipo(), articoloAbbigliamento.getPrezzoBase());
+        this.articoloAbbigliamento = articoloAbbigliamento;
     }
 }
 
-class DiscountDecorator extends ClothingDecorator {
-    private double discountPercentage;
+class DecoratoreSconto extends DecoratoreAbbigliamento {
+    private double percentualeSconto;
     
-    public DiscountDecorator(ClothingItem clothingItem, double discountPercentage) {
-        super(clothingItem);
-        this.discountPercentage = Math.max(10, Math.min(80, discountPercentage));
+    public DecoratoreSconto(ArticoloAbbigliamento articoloAbbigliamento, double percentualeSconto) {
+        super(articoloAbbigliamento);
+        this.percentualeSconto = Math.max(10, Math.min(80, percentualeSconto));
     }
     
     @Override
-    public double getPrice() {
-        return clothingItem.getPrice() * (1 - discountPercentage / 100);
+    public double getPrezzo() {
+        return articoloAbbigliamento.getPrezzo() * (1 - percentualeSconto / 100);
     }
     
     @Override
-    public String getDescription() {
-        return clothingItem.getDescription() + " (Sconto " + discountPercentage + "%)";
+    public String getDescrizione() {
+        return articoloAbbigliamento.getDescrizione() + " (Sconto " + percentualeSconto + "%)";
     }
     
-    public double getDiscountPercentage() {
-        return discountPercentage;
+    public double getPercentualeSconto() {
+        return percentualeSconto;
     }
 }
 
-// ================ FACTORY METHOD PATTERN ================
-abstract class User {
+// ================ PATTERN FACTORY METHOD ================
+abstract class Utente {
     protected String id;
     protected String email;
     protected String nickname;
     protected String password;
     
-    public User(String id, String email, String nickname, String password) {
+    public Utente(String id, String email, String nickname, String password) {
         this.id = id;
         this.email = email;
         this.nickname = nickname;
         this.password = password;
     }
     
-    public abstract String getRole();
-    public abstract void showMenu();
+    public abstract String getRuolo();
+    public abstract void mostraMenu();
     
     public String getId() { return id; }
     public String getEmail() { return email; }
@@ -180,320 +181,320 @@ abstract class User {
     public String getPassword() { return password; }
 }
 
-class AdminUser extends User {
-    public AdminUser(String id, String email, String nickname, String password) {
+class UtenteAmministratore extends Utente {
+    public UtenteAmministratore(String id, String email, String nickname, String password) {
         super(id, email, nickname, password);
     }
     
     @Override
-    public String getRole() {
-        return "ADMIN";
+    public String getRuolo() {
+        return "AMMINISTRATORE";
     }
     
     @Override
-    public void showMenu() {
+    public void mostraMenu() {
         System.out.println("\n=== MENU AMMINISTRATORE ===");
         System.out.println("1. Aggiungi vestito");
         System.out.println("2. Rimuovi vestito");
         System.out.println("3. Aggiungi sconto");
-        System.out.println("4. Visualizza acquisti utenti");
-        System.out.println("5. Spedisci pacco");
+        System.out.println("4. Visualizza ordini in attesa");
+        System.out.println("5. Spedisci ordine");
         System.out.println("6. Visualizza inventario");
-        System.out.println("0. Logout");
+        System.out.println("0. Esci");
     }
 }
 
-class CustomerUser extends User {
-    private List<ClothingItem> cart;
-    private List<Order> orderHistory;
+class UtenteCliente extends Utente {
+    private List<ArticoloAbbigliamento> carrello;
+    private List<Ordine> storicoOrdini;
     
-    public CustomerUser(String id, String email, String nickname, String password) {
+    public UtenteCliente(String id, String email, String nickname, String password) {
         super(id, email, nickname, password);
-        this.cart = new ArrayList<>();
-        this.orderHistory = new ArrayList<>();
+        this.carrello = new ArrayList<>();
+        this.storicoOrdini = new ArrayList<>();
     }
     
     @Override
-    public String getRole() {
-        return "CUSTOMER";
+    public String getRuolo() {
+        return "CLIENTE";
     }
     
     @Override
-    public void showMenu() {
+    public void mostraMenu() {
         System.out.println("\n=== MENU CLIENTE ===");
         System.out.println("1. Visualizza vestiti disponibili");
         System.out.println("2. Acquista vestito");
         System.out.println("3. Visualizza carrello");
-        System.out.println("4. Procedi al checkout");
+        System.out.println("4. Procedi al pagamento");
         System.out.println("5. Visualizza stato ordini");
-        System.out.println("0. Logout");
+        System.out.println("0. Esci");
     }
     
-    public List<ClothingItem> getCart() { return cart; }
-    public List<Order> getOrderHistory() { return orderHistory; }
-    public void addToCart(ClothingItem item) { cart.add(item); }
-    public void clearCart() { cart.clear(); }
-    public void addOrder(Order order) { orderHistory.add(order); }
+    public List<ArticoloAbbigliamento> getCarrello() { return carrello; }
+    public List<Ordine> getStoricoOrdini() { return storicoOrdini; }
+    public void aggiungiAlCarrello(ArticoloAbbigliamento articolo) { carrello.add(articolo); }
+    public void svuotaCarrello() { carrello.clear(); }
+    public void aggiungiOrdine(Ordine ordine) { storicoOrdini.add(ordine); }
 }
 
-abstract class UserFactory {
-    public abstract User createUser(String id, String email, String nickname, String password);
+abstract class FabbricaUtenti {
+    public abstract Utente creaUtente(String id, String email, String nickname, String password);
 }
 
-class AdminUserFactory extends UserFactory {
+class FabbricaAmministratori extends FabbricaUtenti {
     @Override
-    public User createUser(String id, String email, String nickname, String password) {
-        return new AdminUser(id, email, nickname, password);
+    public Utente creaUtente(String id, String email, String nickname, String password) {
+        return new UtenteAmministratore(id, email, nickname, password);
     }
 }
 
-class CustomerUserFactory extends UserFactory {
+class FabbricaClienti extends FabbricaUtenti {
     @Override
-    public User createUser(String id, String email, String nickname, String password) {
-        return new CustomerUser(id, email, nickname, password);
+    public Utente creaUtente(String id, String email, String nickname, String password) {
+        return new UtenteCliente(id, email, nickname, password);
     }
 }
 
-// ================ OBSERVER PATTERN ================
-interface Observer {
-    void update(String message);
+// ================ PATTERN OBSERVER ================
+interface Osservatore {
+    void aggiorna(String messaggio);
 }
 
-interface Subject {
-    void registerObserver(Observer observer);
-    void removeObserver(Observer observer);
-    void notifyObservers(String message);
+interface Soggetto {
+    void registraOsservatore(Osservatore osservatore);
+    void rimuoviOsservatore(Osservatore osservatore);
+    void notificaOsservatori(String messaggio);
 }
 
-class NotificationService implements Observer {
-    private String userEmail;
+class ServizioNotifiche implements Osservatore {
+    private String emailUtente;
     
-    public NotificationService(String userEmail) {
-        this.userEmail = userEmail;
-    }
-    
-    @Override
-    public void update(String message) {
-        System.out.println("📧 Notifica per " + userEmail + ": " + message);
-    }
-}
-
-class Order implements Subject {
-    private String orderId;
-    private String customerId;
-    private List<ClothingItem> items;
-    private double total;
-    private OrderStatus status;
-    private PaymentStrategy paymentStrategy;
-    private ShippingStrategy shippingStrategy;
-    private List<Observer> observers;
-    
-    public enum OrderStatus {
-        PENDING, PAID, SHIPPED, DELIVERED
-    }
-    
-    public Order(String orderId, String customerId) {
-        this.orderId = orderId;
-        this.customerId = customerId;
-        this.items = new ArrayList<>();
-        this.status = OrderStatus.PENDING;
-        this.observers = new ArrayList<>();
+    public ServizioNotifiche(String emailUtente) {
+        this.emailUtente = emailUtente;
     }
     
     @Override
-    public void registerObserver(Observer observer) {
-        observers.add(observer);
+    public void aggiorna(String messaggio) {
+        System.out.println("📧 Notifica per " + emailUtente + ": " + messaggio);
+    }
+}
+
+class Ordine implements Soggetto {
+    private String idOrdine;
+    private String idCliente;
+    private List<ArticoloAbbigliamento> articoli;
+    private double totale;
+    private StatoOrdine stato;
+    private StrategiaPagamento strategiaPagamento;
+    private StrategiaSpedizione strategiaSpedizione;
+    private List<Osservatore> osservatori;
+    
+    public enum StatoOrdine {
+        IN_ATTESA, PAGATO, SPEDITO, CONSEGNATO
+    }
+    
+    public Ordine(String idOrdine, String idCliente) {
+        this.idOrdine = idOrdine;
+        this.idCliente = idCliente;
+        this.articoli = new ArrayList<>();
+        this.stato = StatoOrdine.IN_ATTESA;
+        this.osservatori = new ArrayList<>();
     }
     
     @Override
-    public void removeObserver(Observer observer) {
-        observers.remove(observer);
+    public void registraOsservatore(Osservatore osservatore) {
+        osservatori.add(osservatore);
     }
     
     @Override
-    public void notifyObservers(String message) {
-        for (Observer observer : observers) {
-            observer.update(message);
+    public void rimuoviOsservatore(Osservatore osservatore) {
+        osservatori.remove(osservatore);
+    }
+    
+    @Override
+    public void notificaOsservatori(String messaggio) {
+        for (Osservatore osservatore : osservatori) {
+            osservatore.aggiorna(messaggio);
         }
     }
     
-    public void updateStatus(OrderStatus newStatus) {
-        this.status = newStatus;
-        String message = "Ordine " + orderId + " aggiornato a: " + newStatus;
-        notifyObservers(message);
+    public void aggiornaStato(StatoOrdine nuovoStato) {
+        this.stato = nuovoStato;
+        String messaggio = "Ordine " + idOrdine + " aggiornato a: " + nuovoStato;
+        notificaOsservatori(messaggio);
     }
     
-    // Getters e Setters
-    public String getOrderId() { return orderId; }
-    public String getCustomerId() { return customerId; }
-    public List<ClothingItem> getItems() { return items; }
-    public double getTotal() { return total; }
-    public OrderStatus getStatus() { return status; }
-    public PaymentStrategy getPaymentStrategy() { return paymentStrategy; }
-    public ShippingStrategy getShippingStrategy() { return shippingStrategy; }
+    // Getter e Setter
+    public String getIdOrdine() { return idOrdine; }
+    public String getIdCliente() { return idCliente; }
+    public List<ArticoloAbbigliamento> getArticoli() { return articoli; }
+    public double getTotale() { return totale; }
+    public StatoOrdine getStato() { return stato; }
+    public StrategiaPagamento getStrategiaPagamento() { return strategiaPagamento; }
+    public StrategiaSpedizione getStrategiaSpedizione() { return strategiaSpedizione; }
     
-    public void setItems(List<ClothingItem> items) { this.items = new ArrayList<>(items); }
-    public void setTotal(double total) { this.total = total; }
-    public void setPaymentStrategy(PaymentStrategy paymentStrategy) { this.paymentStrategy = paymentStrategy; }
-    public void setShippingStrategy(ShippingStrategy shippingStrategy) { this.shippingStrategy = shippingStrategy; }
+    public void setArticoli(List<ArticoloAbbigliamento> articoli) { this.articoli = new ArrayList<>(articoli); }
+    public void setTotale(double totale) { this.totale = totale; }
+    public void setStrategiaPagamento(StrategiaPagamento strategiaPagamento) { this.strategiaPagamento = strategiaPagamento; }
+    public void setStrategiaSpedizione(StrategiaSpedizione strategiaSpedizione) { this.strategiaSpedizione = strategiaSpedizione; }
 }
 
-// ================ SINGLETON PATTERN ================
-class EcommerceDatabase {
-    private static EcommerceDatabase instance;
-    private List<User> users;
-    private List<ClothingItem> inventory;
-    private List<Order> orders;
-    private int nextUserId;
-    private int nextOrderId;
+// ================ PATTERN SINGLETON ================
+class DatabaseEcommerce {
+    private static DatabaseEcommerce istanza;
+    private List<Utente> utenti;
+    private List<ArticoloAbbigliamento> inventario;
+    private List<Ordine> ordini;
+    private int prossimoIdUtente;
+    private int prossimoIdOrdine;
     
-    private EcommerceDatabase() {
-        users = new ArrayList<>();
-        inventory = new ArrayList<>();
-        orders = new ArrayList<>();
-        nextUserId = 1;
-        nextOrderId = 1;
-        initializeAdminUser();
+    private DatabaseEcommerce() {
+        utenti = new ArrayList<>();
+        inventario = new ArrayList<>();
+        ordini = new ArrayList<>();
+        prossimoIdUtente = 1;
+        prossimoIdOrdine = 1;
+        inizializzaAmministratore();
     }
     
-    public static EcommerceDatabase getInstance() {
-        if (instance == null) {
-            instance = new EcommerceDatabase();
+    public static DatabaseEcommerce getIstanza() {
+        if (istanza == null) {
+            istanza = new DatabaseEcommerce();
         }
-        return instance;
+        return istanza;
     }
     
-    private void initializeAdminUser() {
-        AdminUserFactory adminFactory = new AdminUserFactory();
-        User admin = adminFactory.createUser("admin", "admin@shop.com", "admin", "admin123");
-        users.add(admin);
+    private void inizializzaAmministratore() {
+        FabbricaAmministratori fabbricaAdmin = new FabbricaAmministratori();
+        Utente admin = fabbricaAdmin.creaUtente("admin", "admin@negozio.com", "admin", "admin123");
+        utenti.add(admin);
     }
     
-    public String generateUserId() {
-        return "user" + (nextUserId++);
+    public String generaIdUtente() {
+        return "utente" + (prossimoIdUtente++);
     }
     
-    public String generateOrderId() {
-        return "order" + (nextOrderId++);
+    public String generaIdOrdine() {
+        return "ordine" + (prossimoIdOrdine++);
     }
     
-    public void addUser(User user) {
-        users.add(user);
+    public void aggiungiUtente(Utente utente) {
+        utenti.add(utente);
     }
     
-    public User getUser(String id) {
-        for (User user : users) {
-            if (user.getId().equals(id)) {
-                return user;
+    public Utente getUtente(String id) {
+        for (Utente utente : utenti) {
+            if (utente.getId().equals(id)) {
+                return utente;
             }
         }
         return null;
     }
     
-    public User authenticateUser(String loginId, String password) {
-        for (User user : users) {
-            if ((user.getEmail().equals(loginId) || user.getNickname().equals(loginId)) 
-                && user.getPassword().equals(password)) {
-                return user;
+    public Utente autenticaUtente(String loginId, String password) {
+        for (Utente utente : utenti) {
+            if ((utente.getEmail().equals(loginId) || utente.getNickname().equals(loginId)) 
+                && utente.getPassword().equals(password)) {
+                return utente;
             }
         }
         return null;
     }
     
-    public void addClothingItem(ClothingItem item) {
-        // Rimuovi item esistente con stesso ID se presente
-        for (int i = 0; i < inventory.size(); i++) {
-            if (inventory.get(i).getId().equals(item.getId())) {
-                inventory.remove(i);
+    public void aggiungiArticoloAbbigliamento(ArticoloAbbigliamento articolo) {
+        // Rimuovi articolo esistente con stesso ID se presente
+        for (int i = 0; i < inventario.size(); i++) {
+            if (inventario.get(i).getId().equals(articolo.getId())) {
+                inventario.remove(i);
                 break;
             }
         }
-        inventory.add(item);
+        inventario.add(articolo);
     }
     
-    public ClothingItem getClothingItem(String id) {
-        for (ClothingItem item : inventory) {
-            if (item.getId().equals(id)) {
-                return item;
+    public ArticoloAbbigliamento getArticoloAbbigliamento(String id) {
+        for (ArticoloAbbigliamento articolo : inventario) {
+            if (articolo.getId().equals(id)) {
+                return articolo;
             }
         }
         return null;
     }
     
-    public void removeClothingItem(String id) {
-        for (int i = 0; i < inventory.size(); i++) {
-            if (inventory.get(i).getId().equals(id)) {
-                inventory.remove(i);
+    public void rimuoviArticoloAbbigliamento(String id) {
+        for (int i = 0; i < inventario.size(); i++) {
+            if (inventario.get(i).getId().equals(id)) {
+                inventario.remove(i);
                 break;
             }
         }
     }
     
-    public List<ClothingItem> getInventory() {
-        return new ArrayList<>(inventory);
+    public List<ArticoloAbbigliamento> getInventario() {
+        return new ArrayList<>(inventario);
     }
     
-    public void addOrder(Order order) {
-        orders.add(order);
+    public void aggiungiOrdine(Ordine ordine) {
+        ordini.add(ordine);
     }
     
-    public Order getOrder(String orderId) {
-        for (Order order : orders) {
-            if (order.getOrderId().equals(orderId)) {
-                return order;
+    public Ordine getOrdine(String idOrdine) {
+        for (Ordine ordine : ordini) {
+            if (ordine.getIdOrdine().equals(idOrdine)) {
+                return ordine;
             }
         }
         return null;
     }
     
-    public List<Order> getOrders() {
-        return new ArrayList<>(orders);
+    public List<Ordine> getOrdini() {
+        return new ArrayList<>(ordini);
     }
     
-    public List<Order> getOrdersByCustomer(String customerId) {
-        List<Order> customerOrders = new ArrayList<>();
-        for (Order order : orders) {
-            if (order.getCustomerId().equals(customerId)) {
-                customerOrders.add(order);
+    public List<Ordine> getOrdiniPerCliente(String idCliente) {
+        List<Ordine> ordiniCliente = new ArrayList<>();
+        for (Ordine ordine : ordini) {
+            if (ordine.getIdCliente().equals(idCliente)) {
+                ordiniCliente.add(ordine);
             }
         }
-        return customerOrders;
+        return ordiniCliente;
     }
     
-    public List<Order> getPendingOrders() {
-        List<Order> pendingOrders = new ArrayList<>();
-        for (Order order : orders) {
-            if (order.getStatus() == Order.OrderStatus.PAID) {
-                pendingOrders.add(order);
+    public List<Ordine> getOrdiniInAttesa() {
+        List<Ordine> ordiniInAttesa = new ArrayList<>();
+        for (Ordine ordine : ordini) {
+            if (ordine.getStato() == Ordine.StatoOrdine.PAGATO) {
+                ordiniInAttesa.add(ordine);
             }
         }
-        return pendingOrders;
+        return ordiniInAttesa;
     }
 }
 
-// ================ FACADE PATTERN ================
-class EcommerceFacade {
-    private EcommerceDatabase database;
+// ================ PATTERN FACADE ================
+class FacadeEcommerce {
+    private DatabaseEcommerce database;
     private Scanner scanner;
     
-    public EcommerceFacade() {
-        this.database = EcommerceDatabase.getInstance();
+    public FacadeEcommerce() {
+        this.database = DatabaseEcommerce.getIstanza();
         this.scanner = new Scanner(System.in);
     }
     
-    public void startApplication() {
+    public void avviaApplicazione() {
         System.out.println("🛍️ Benvenuto nel negozio di abbigliamento!");
         
         while (true) {
-            showMainMenu();
-            int choice = getIntInput();
+            mostraMenuPrincipale();
+            int scelta = leggiIntero();
             
-            switch (choice) {
+            switch (scelta) {
                 case 1:
-                    handleLogin();
+                    gestisciLogin();
                     break;
                 case 2:
-                    handleRegistration();
+                    gestisciRegistrazione();
                     break;
                 case 0:
                     System.out.println("Arrivederci!");
@@ -504,30 +505,30 @@ class EcommerceFacade {
         }
     }
     
-    private void showMainMenu() {
+    private void mostraMenuPrincipale() {
         System.out.println("\n=== MENU PRINCIPALE ===");
-        System.out.println("1. Login");
-        System.out.println("2. Registrazione");
+        System.out.println("1. Accedi");
+        System.out.println("2. Registrati");
         System.out.println("0. Esci");
         System.out.print("Scegli un'opzione: ");
     }
     
-    private void handleLogin() {
+    private void gestisciLogin() {
         System.out.print("Email o Nickname: ");
         String loginId = scanner.nextLine();
         System.out.print("Password: ");
         String password = scanner.nextLine();
         
-        User user = database.authenticateUser(loginId, password);
-        if (user != null) {
-            System.out.println("Login effettuato con successo! Benvenuto " + user.getNickname());
-            handleUserSession(user);
+        Utente utente = database.autenticaUtente(loginId, password);
+        if (utente != null) {
+            System.out.println("Accesso effettuato con successo! Benvenuto " + utente.getNickname());
+            gestisciSessioneUtente(utente);
         } else {
             System.out.println("Credenziali non valide!");
         }
     }
     
-    private void handleRegistration() {
+    private void gestisciRegistrazione() {
         System.out.print("Email: ");
         String email = scanner.nextLine();
         System.out.print("Nickname: ");
@@ -535,296 +536,296 @@ class EcommerceFacade {
         System.out.print("Password: ");
         String password = scanner.nextLine();
         
-        String userId = database.generateUserId();
-        CustomerUserFactory customerFactory = new CustomerUserFactory();
-        User newUser = customerFactory.createUser(userId, email, nickname, password);
-        database.addUser(newUser);
+        String idUtente = database.generaIdUtente();
+        FabbricaClienti fabbricaClienti = new FabbricaClienti();
+        Utente nuovoUtente = fabbricaClienti.creaUtente(idUtente, email, nickname, password);
+        database.aggiungiUtente(nuovoUtente);
         
         System.out.println("Registrazione completata con successo!");
     }
     
-    private void handleUserSession(User user) {
+    private void gestisciSessioneUtente(Utente utente) {
         while (true) {
-            user.showMenu();
+            utente.mostraMenu();
             System.out.print("Scegli un'opzione: ");
-            int choice = getIntInput();
+            int scelta = leggiIntero();
             
-            if (choice == 0) {
-                System.out.println("Logout effettuato!");
+            if (scelta == 0) {
+                System.out.println("Disconnessione effettuata!");
                 break;
             }
             
-            if (user instanceof AdminUser) {
-                handleAdminAction((AdminUser) user, choice);
-            } else if (user instanceof CustomerUser) {
-                handleCustomerAction((CustomerUser) user, choice);
+            if (utente instanceof UtenteAmministratore) {
+                gestisciAzioneAmministratore((UtenteAmministratore) utente, scelta);
+            } else if (utente instanceof UtenteCliente) {
+                gestisciAzioneCliente((UtenteCliente) utente, scelta);
             }
         }
     }
     
-    private void handleAdminAction(AdminUser admin, int choice) {
-        switch (choice) {
+    private void gestisciAzioneAmministratore(UtenteAmministratore admin, int scelta) {
+        switch (scelta) {
             case 1:
-                addClothingItem();
+                aggiungiArticoloAbbigliamento();
                 break;
             case 2:
-                removeClothingItem();
+                rimuoviArticoloAbbigliamento();
                 break;
             case 3:
-                addDiscount();
+                aggiungiSconto();
                 break;
             case 4:
-                viewPendingOrders();
+                visualizzaOrdiniInAttesa();
                 break;
             case 5:
-                shipOrder();
+                spedisciOrdine();
                 break;
             case 6:
-                viewInventory();
+                visualizzaInventario();
                 break;
             default:
                 System.out.println("Scelta non valida!");
         }
     }
     
-    private void handleCustomerAction(CustomerUser customer, int choice) {
-        switch (choice) {
+    private void gestisciAzioneCliente(UtenteCliente cliente, int scelta) {
+        switch (scelta) {
             case 1:
-                viewAvailableClothes();
+                visualizzaVestitiDisponibili();
                 break;
             case 2:
-                buyClothing(customer);
+                acquistaVestito(cliente);
                 break;
             case 3:
-                viewCart(customer);
+                visualizzaCarrello(cliente);
                 break;
             case 4:
-                processCheckout(customer);
+                elaboraPagamento(cliente);
                 break;
             case 5:
-                viewOrderStatus(customer);
+                visualizzaStatoOrdini(cliente);
                 break;
             default:
                 System.out.println("Scelta non valida!");
         }
     }
     
-    private void addClothingItem() {
+    private void aggiungiArticoloAbbigliamento() {
         System.out.print("ID vestito: ");
         String id = scanner.nextLine();
         System.out.print("Nome: ");
-        String name = scanner.nextLine();
+        String nome = scanner.nextLine();
         System.out.print("Tipologia: ");
-        String type = scanner.nextLine();
+        String tipo = scanner.nextLine();
         System.out.print("Prezzo: ");
-        double price = getDoubleInput();
+        double prezzo = leggiDecimale();
         
-        ClothingItem item = new BasicClothingItem(id, name, type, price);
-        database.addClothingItem(item);
+        ArticoloAbbigliamento articolo = new ArticoloAbbigliamentoBase(id, nome, tipo, prezzo);
+        database.aggiungiArticoloAbbigliamento(articolo);
         System.out.println("Vestito aggiunto con successo!");
     }
     
-    private void removeClothingItem() {
+    private void rimuoviArticoloAbbigliamento() {
         System.out.print("ID vestito da rimuovere: ");
         String id = scanner.nextLine();
         
-        if (database.getClothingItem(id) != null) {
-            database.removeClothingItem(id);
+        if (database.getArticoloAbbigliamento(id) != null) {
+            database.rimuoviArticoloAbbigliamento(id);
             System.out.println("Vestito rimosso con successo!");
         } else {
             System.out.println("Vestito non trovato!");
         }
     }
     
-    private void addDiscount() {
+    private void aggiungiSconto() {
         System.out.print("ID vestito: ");
         String id = scanner.nextLine();
-        ClothingItem item = database.getClothingItem(id);
+        ArticoloAbbigliamento articolo = database.getArticoloAbbigliamento(id);
         
-        if (item != null) {
+        if (articolo != null) {
             System.out.print("Percentuale sconto (10-80%): ");
-            double discount = getDoubleInput();
+            double sconto = leggiDecimale();
             
-            ClothingItem discountedItem = new DiscountDecorator(item, discount);
-            database.addClothingItem(discountedItem);
+            ArticoloAbbigliamento articoloScontato = new DecoratoreSconto(articolo, sconto);
+            database.aggiungiArticoloAbbigliamento(articoloScontato);
             System.out.println("Sconto applicato con successo!");
         } else {
             System.out.println("Vestito non trovato!");
         }
     }
     
-    private void viewPendingOrders() {
-        List<Order> pendingOrders = database.getPendingOrders();
+    private void visualizzaOrdiniInAttesa() {
+        List<Ordine> ordiniInAttesa = database.getOrdiniInAttesa();
         System.out.println("\n=== ORDINI IN ATTESA DI SPEDIZIONE ===");
         
-        if (pendingOrders.isEmpty()) {
+        if (ordiniInAttesa.isEmpty()) {
             System.out.println("Nessun ordine in attesa di spedizione.");
         } else {
-            for (Order order : pendingOrders) {
-                User customer = database.getUser(order.getCustomerId());
-                System.out.println("Ordine: " + order.getOrderId() + 
-                                 " - Cliente: " + customer.getNickname() + 
-                                 " - Totale: euro" + String.format("%.2f", order.getTotal()));
+            for (Ordine ordine : ordiniInAttesa) {
+                Utente cliente = database.getUtente(ordine.getIdCliente());
+                System.out.println("Ordine: " + ordine.getIdOrdine() + 
+                                 " - Cliente: " + cliente.getNickname() + 
+                                 " - Totale: €" + String.format("%.2f", ordine.getTotale()));
             }
         }
     }
     
-    private void shipOrder() {
+    private void spedisciOrdine() {
         System.out.print("ID ordine da spedire: ");
-        String orderId = scanner.nextLine();
-        Order order = database.getOrder(orderId);
+        String idOrdine = scanner.nextLine();
+        Ordine ordine = database.getOrdine(idOrdine);
         
-        if (order != null && order.getStatus() == Order.OrderStatus.PAID) {
-            order.updateStatus(Order.OrderStatus.SHIPPED);
+        if (ordine != null && ordine.getStato() == Ordine.StatoOrdine.PAGATO) {
+            ordine.aggiornaStato(Ordine.StatoOrdine.SPEDITO);
             System.out.println("Ordine spedito con successo!");
         } else {
             System.out.println("Ordine non trovato o non valido per la spedizione!");
         }
     }
     
-    private void viewInventory() {
+    private void visualizzaInventario() {
         System.out.println("\n=== INVENTARIO ===");
-        List<ClothingItem> inventory = database.getInventory();
+        List<ArticoloAbbigliamento> inventario = database.getInventario();
         
-        if (inventory.isEmpty()) {
+        if (inventario.isEmpty()) {
             System.out.println("Inventario vuoto.");
         } else {
-            for (ClothingItem item : inventory) {
-                System.out.println(item.getId() + " - " + item.getDescription() + 
-                                 " - euro" + String.format("%.2f", item.getPrice()));
+            for (ArticoloAbbigliamento articolo : inventario) {
+                System.out.println(articolo.getId() + " - " + articolo.getDescrizione() + 
+                                 " - €" + String.format("%.2f", articolo.getPrezzo()));
             }
         }
     }
     
-    private void viewAvailableClothes() {
+    private void visualizzaVestitiDisponibili() {
         System.out.println("\n=== VESTITI DISPONIBILI ===");
-        List<ClothingItem> inventory = database.getInventory();
+        List<ArticoloAbbigliamento> inventario = database.getInventario();
         
-        if (inventory.isEmpty()) {
+        if (inventario.isEmpty()) {
             System.out.println("Nessun vestito disponibile.");
         } else {
-            for (ClothingItem item : inventory) {
-                System.out.println(item.getId() + " - " + item.getDescription() + 
-                                 " - euro" + String.format("%.2f", item.getPrice()));
+            for (ArticoloAbbigliamento articolo : inventario) {
+                System.out.println(articolo.getId() + " - " + articolo.getDescrizione() + 
+                                 " - €" + String.format("%.2f", articolo.getPrezzo()));
             }
         }
     }
     
-    private void buyClothing(CustomerUser customer) {
+    private void acquistaVestito(UtenteCliente cliente) {
         System.out.print("ID vestito da acquistare: ");
         String id = scanner.nextLine();
-        ClothingItem item = database.getClothingItem(id);
+        ArticoloAbbigliamento articolo = database.getArticoloAbbigliamento(id);
         
-        if (item != null) {
-            customer.addToCart(item);
+        if (articolo != null) {
+            cliente.aggiungiAlCarrello(articolo);
             System.out.println("Vestito aggiunto al carrello!");
         } else {
             System.out.println("Vestito non trovato!");
         }
     }
     
-    private void viewCart(CustomerUser customer) {
+    private void visualizzaCarrello(UtenteCliente cliente) {
         System.out.println("\n=== CARRELLO ===");
-        List<ClothingItem> cart = customer.getCart();
+        List<ArticoloAbbigliamento> carrello = cliente.getCarrello();
         
-        if (cart.isEmpty()) {
+        if (carrello.isEmpty()) {
             System.out.println("Carrello vuoto.");
         } else {
-            double total = 0;
-            for (ClothingItem item : cart) {
-                System.out.println(item.getDescription() + " - euro" + String.format("%.2f", item.getPrice()));
-                total += item.getPrice();
+            double totale = 0;
+            for (ArticoloAbbigliamento articolo : carrello) {
+                System.out.println(articolo.getDescrizione() + " - €" + String.format("%.2f", articolo.getPrezzo()));
+                totale += articolo.getPrezzo();
             }
-            System.out.println("Totale: euro" + String.format("%.2f", total));
+            System.out.println("Totale: €" + String.format("%.2f", totale));
         }
     }
     
-    private void processCheckout(CustomerUser customer) {
-        if (customer.getCart().isEmpty()) {
+    private void elaboraPagamento(UtenteCliente cliente) {
+        if (cliente.getCarrello().isEmpty()) {
             System.out.println("Carrello vuoto!");
             return;
         }
         
         // Calcolo totale
-        double total = 0;
-        for (ClothingItem item : customer.getCart()) {
-            total += item.getPrice();
+        double totale = 0;
+        for (ArticoloAbbigliamento articolo : cliente.getCarrello()) {
+            totale += articolo.getPrezzo();
         }
         
         // Scelta metodo di pagamento
         System.out.println("Scegli metodo di pagamento:");
         System.out.println("1. Carta di credito");
         System.out.println("2. PayPal");
-        int paymentChoice = getIntInput();
+        int sceltaPagamento = leggiIntero();
         
-        PaymentStrategy paymentStrategy;
-        if (paymentChoice == 1) {
+        StrategiaPagamento strategiaPagamento;
+        if (sceltaPagamento == 1) {
             System.out.print("Numero carta: ");
-            String cardNumber = scanner.nextLine();
-            paymentStrategy = new CreditCardPayment(cardNumber);
+            String numeroCarta = scanner.nextLine();
+            strategiaPagamento = new PagamentoCartaCredito(numeroCarta);
         } else {
-            paymentStrategy = new PayPalPayment(customer.getEmail());
+            strategiaPagamento = new PagamentoPayPal(cliente.getEmail());
         }
         
         // Scelta metodo di spedizione
         System.out.println("Scegli metodo di spedizione:");
         System.out.println("1. Spedizione standard");
         System.out.println("2. Spedizione express");
-        int shippingChoice = getIntInput();
+        int sceltaSpedizione = leggiIntero();
         
-        ShippingStrategy shippingStrategy;
-        if (shippingChoice == 1) {
-            shippingStrategy = new StandardShipping();
+        StrategiaSpedizione strategiaSpedizione;
+        if (sceltaSpedizione == 1) {
+            strategiaSpedizione = new SpedizioneStandard();
         } else {
-            shippingStrategy = new ExpressShipping();
+            strategiaSpedizione = new SpedizioneExpress();
         }
         
-        double shippingCost = shippingStrategy.calculateShippingCost(total);
-        double finalTotal = total + shippingCost;
+        double costoSpedizione = strategiaSpedizione.calcolaCostoSpedizione(totale);
+        double totaleFinale = totale + costoSpedizione;
         
         // Creazione ordine
-        String orderId = database.generateOrderId();
-        Order order = new Order(orderId, customer.getId());
-        order.setItems(customer.getCart());
-        order.setTotal(finalTotal);
-        order.setPaymentStrategy(paymentStrategy);
-        order.setShippingStrategy(shippingStrategy);
+        String idOrdine = database.generaIdOrdine();
+        Ordine ordine = new Ordine(idOrdine, cliente.getId());
+        ordine.setArticoli(cliente.getCarrello());
+        ordine.setTotale(totaleFinale);
+        ordine.setStrategiaPagamento(strategiaPagamento);
+        ordine.setStrategiaSpedizione(strategiaSpedizione);
         
         // Registrazione per notifiche
-        NotificationService notificationService = new NotificationService(customer.getEmail());
-        order.registerObserver(notificationService);
+        ServizioNotifiche servizioNotifiche = new ServizioNotifiche(cliente.getEmail());
+        ordine.registraOsservatore(servizioNotifiche);
         
-        // Processamento pagamento
-        if (paymentStrategy.processPayment(finalTotal)) {
-            order.updateStatus(Order.OrderStatus.PAID);
-            database.addOrder(order);
-            customer.addOrder(order);
-            customer.clearCart();
+        // Elaborazione pagamento
+        if (strategiaPagamento.elaboraPagamento(totaleFinale)) {
+            ordine.aggiornaStato(Ordine.StatoOrdine.PAGATO);
+            database.aggiungiOrdine(ordine);
+            cliente.aggiungiOrdine(ordine);
+            cliente.svuotaCarrello();
             
             System.out.println("Ordine completato con successo!");
-            System.out.println("ID Ordine: " + orderId);
-            System.out.println("Totale pagato: euro" + String.format("%.2f", finalTotal));
+            System.out.println("ID Ordine: " + idOrdine);
+            System.out.println("Totale pagato: €" + String.format("%.2f", totaleFinale));
         } else {
             System.out.println("Errore nel pagamento!");
         }
     }
     
-    private void viewOrderStatus(CustomerUser customer) {
+    private void visualizzaStatoOrdini(UtenteCliente cliente) {
         System.out.println("\n=== STATO ORDINI ===");
-        List<Order> orders = customer.getOrderHistory();
+        List<Ordine> ordini = cliente.getStoricoOrdini();
         
-        if (orders.isEmpty()) {
+        if (ordini.isEmpty()) {
             System.out.println("Nessun ordine trovato.");
         } else {
-            for (Order order : orders) {
-                System.out.println("Ordine: " + order.getOrderId() + 
-                                 " - Stato: " + order.getStatus() + 
-                                 " - Totale: euro" + String.format("%.2f", order.getTotal()));
+            for (Ordine ordine : ordini) {
+                System.out.println("Ordine: " + ordine.getIdOrdine() + 
+                                 " - Stato: " + ordine.getStato() + 
+                                 " - Totale: €" + String.format("%.2f", ordine.getTotale()));
             }
         }
     }
     
-    private int getIntInput() {
+    private int leggiIntero() {
         try {
             return Integer.parseInt(scanner.nextLine());
         } catch (NumberFormatException e) {
@@ -832,7 +833,7 @@ class EcommerceFacade {
         }
     }
     
-    private double getDoubleInput() {
+    private double leggiDecimale() {
         try {
             return Double.parseDouble(scanner.nextLine());
         } catch (NumberFormatException e) {
@@ -841,10 +842,10 @@ class EcommerceFacade {
     }
 }
 
-// ================ MAIN CLASS ================
+// ================ CLASSE PRINCIPALE ================
 public class EcommerceSystem {
     public static void main(String[] args) {
-        EcommerceFacade facade = new EcommerceFacade();
-        facade.startApplication();
+        FacadeEcommerce facade = new FacadeEcommerce();
+        facade.avviaApplicazione();
     }
 }
