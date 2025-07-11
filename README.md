@@ -1,121 +1,121 @@
 # TEST3_CASSIAMassimiliano 11/07/2025
 Test 3 11/07/2025
 
-# Sistema E-commerce con Design Patterns
+# Sistema E-commerce con Design Pattern
 
 ## Descrizione del Progetto
 
-Questo progetto implementa un sistema e-commerce completo per la vendita di abbigliamento, utilizzando 6 design patterns fondamentali. Il sistema  offre funzionalità complete per gestire utenti, prodotti, ordini e pagamenti attraverso un'interfaccia a console.
+Questo progetto implementa un sistema e-commerce completo per la vendita di abbigliamento, utilizzando 6 design pattern fondamentali. Il sistema offre funzionalità complete per gestire utenti, prodotti, ordini e pagamenti attraverso un'interfaccia a console.
 
-## Design Patterns Implementati
+## Design Pattern Implementati
 
-### 1. **Strategy Pattern**
+### 1. **Pattern Strategia (Strategy Pattern)**
 Utilizzato per gestire diverse strategie di pagamento e spedizione in modo intercambiabile.
 
-#### Pagamenti (`PaymentStrategy`)
-- **`CreditCardPayment`**: Gestisce pagamenti con carta di credito
-- **`PayPalPayment`**: Gestisce pagamenti tramite PayPal
-- Ogni strategia implementa `processPayment()` e `getPaymentMethod()`
+#### Pagamenti (`StrategiaPagamento`)
+- **`PagamentoCartaCredito`**: Gestisce pagamenti con carta di credito
+- **`PagamentoPayPal`**: Gestisce pagamenti tramite PayPal
+- Ogni strategia implementa `elaboraPagamento()` e `getMetodoPagamento()`
 
-#### Spedizioni (`ShippingStrategy`)
-- **`StandardShipping`**: Spedizione standard (5-7 giorni, gratis sopra €50, altrimenti €5.99)
-- **`ExpressShipping`**: Spedizione express (2 giorni, €12.99)
-- Ogni strategia implementa `calculateShippingCost()`, `getShippingMethod()` e `getDeliveryDays()`
+#### Spedizioni (`StrategiaSpedizione`)
+- **`SpedizioneStandard`**: Spedizione standard (5-7 giorni, gratis sopra €50, altrimenti €5.99)
+- **`SpedizioneExpress`**: Spedizione express (2 giorni, €12.99)
+- Ogni strategia implementa `calcolaCostoSpedizione()`, `getMetodoSpedizione()` e `getGiorniConsegna()`
 
-### 2. **Decorator Pattern**
+### 2. **Pattern Decoratore (Decorator Pattern)**
 Utilizzato per aggiungere funzionalità agli articoli di abbigliamento senza modificare la classe base.
 
 #### Struttura
-- **`ClothingItem`**: Classe astratta base per tutti gli articoli
-- **`BasicClothingItem`**: Implementazione concreta di base
-- **`ClothingDecorator`**: Decorator astratto
-- **`DiscountDecorator`**: Applica sconti percentuali (10-80%) agli articoli
+- **`ArticoloAbbigliamento`**: Classe astratta base per tutti gli articoli
+- **`ArticoloAbbigliamentoBase`**: Implementazione concreta di base
+- **`DecoratoreAbbigliamento`**: Decoratore astratto
+- **`DecoratoreSconto`**: Applica sconti percentuali (10-80%) agli articoli
 
-### 3. **Factory Method Pattern**
+### 3. **Pattern Factory Method**
 Utilizzato per creare diversi tipi di utenti senza specificare la classe esatta.
 
 #### Fabbriche
-- **`AdminUserFactory`**: Crea utenti amministratori
-- **`CustomerUserFactory`**: Crea utenti clienti
-- Ogni factory implementa `createUser()` per istanziare il tipo appropriato
+- **`FabbricaAmministratori`**: Crea utenti amministratori
+- **`FabbricaClienti`**: Crea utenti clienti
+- Ogni fabbrica implementa `creaUtente()` per istanziare il tipo appropriato
 
-### 4. **Observer Pattern**
+### 4. **Pattern Osservatore (Observer Pattern)**
 Utilizzato per notificare gli utenti sui cambiamenti di stato degli ordini.
 
 #### Componenti
-- **`NotificationService`**: Observer che invia notifiche email
-- **`Order`**: Subject che notifica i cambiamenti di stato
-- Quando lo stato di un ordine cambia, tutti gli observer registrati ricevono una notifica
+- **`ServizioNotifiche`**: Osservatore che invia notifiche email
+- **`Ordine`**: Soggetto che notifica i cambiamenti di stato
+- Quando lo stato di un ordine cambia, tutti gli osservatori registrati ricevono una notifica
 
-### 5. **Singleton Pattern**
+### 5. **Pattern Singleton**
 Utilizzato per garantire una singola istanza del database dell'applicazione.
 
-#### `EcommerceDatabase`
+#### `DatabaseEcommerce`
 - Mantiene lo stato globale dell'applicazione
 - Gestisce utenti, inventario e ordini
 - Fornisce metodi per autenticazione e gestione dati
 - Inizializza automaticamente un utente amministratore
 
-### 6. **Facade Pattern**
+### 6. **Pattern Facade**
 Utilizzato per fornire un'interfaccia semplificata alle operazioni complesse del sistema.
 
-#### `EcommerceFacade`
+#### `FacadeEcommerce`
 - Gestisce l'interfaccia utente console
 - Coordina le operazioni tra i diversi componenti
 - Fornisce menu distinti per amministratori e clienti
 
 ## Struttura delle Classi
 
-### Classi Core
+### Classi Principali
 
-#### `User` (Astratta)
+#### `Utente` (Astratta)
 - **Attributi**: `id`, `email`, `nickname`, `password`
-- **Metodi**: `getRole()`, `showMenu()`, getter per tutti gli attributi
+- **Metodi**: `getRuolo()`, `mostraMenu()`, getter per tutti gli attributi
 - **Sottoclassi**:
-  - `AdminUser`: Gestisce operazioni amministrative
-  - `CustomerUser`: Gestisce carrello e storico ordini
+  - `UtenteAmministratore`: Gestisce operazioni amministrative
+  - `UtenteCliente`: Gestisce carrello e storico ordini
 
-#### `ClothingItem` (Astratta)
-- **Attributi**: `id`, `name`, `type`, `price`
-- **Metodi**: `getPrice()`, `getDescription()`, getter per tutti gli attributi
+#### `ArticoloAbbigliamento` (Astratta)
+- **Attributi**: `id`, `nome`, `tipo`, `prezzo`
+- **Metodi**: `getPrezzo()`, `getDescrizione()`, getter per tutti gli attributi
 - **Implementazioni**:
-  - `BasicClothingItem`: Articolo base
-  - `DiscountDecorator`: Articolo con sconto applicato
+  - `ArticoloAbbigliamentoBase`: Articolo base
+  - `DecoratoreSconto`: Articolo con sconto applicato
 
-#### `Order`
+#### `Ordine`
 - **Attributi**: 
-  - `orderId`: Identificativo univoco
-  - `customerId`: ID del cliente
-  - `items`: Lista degli articoli
-  - `total`: Totale dell'ordine
-  - `status`: Stato dell'ordine (PENDING, PAID, SHIPPED, DELIVERED)
-  - `paymentStrategy`: Strategia di pagamento
-  - `shippingStrategy`: Strategia di spedizione
-  - `observers`: Lista degli observer per le notifiche
+  - `idOrdine`: Identificativo univoco
+  - `idCliente`: ID del cliente
+  - `articoli`: Lista degli articoli
+  - `totale`: Totale dell'ordine
+  - `stato`: Stato dell'ordine (IN_ATTESA, PAGATO, SPEDITO, CONSEGNATO)
+  - `strategiaPagamento`: Strategia di pagamento
+  - `strategiaSpedizione`: Strategia di spedizione
+  - `osservatori`: Lista degli osservatori per le notifiche
 
 ## Funzionalità del Sistema
 
 ### Menu Principale
-1. **Login**: Accesso con email/nickname e password
-2. **Registrazione**: Creazione nuovo account cliente
+1. **Accedi**: Accesso con email/nickname e password
+2. **Registrati**: Creazione nuovo account cliente
 3. **Esci**: Termina l'applicazione
 
 ### Funzionalità Amministratore
 1. **Aggiungi vestito**: Inserimento nuovi articoli nell'inventario
 2. **Rimuovi vestito**: Eliminazione articoli dall'inventario
 3. **Aggiungi sconto**: Applicazione sconti percentuali agli articoli
-4. **Visualizza acquisti utenti**: Elenco ordini in attesa di spedizione
-5. **Spedisci pacco**: Aggiornamento stato ordine a "SHIPPED"
+4. **Visualizza ordini in attesa**: Elenco ordini in attesa di spedizione
+5. **Spedisci ordine**: Aggiornamento stato ordine a "SPEDITO"
 6. **Visualizza inventario**: Elenco completo degli articoli disponibili
 
 ### Funzionalità Cliente
 1. **Visualizza vestiti disponibili**: Catalogo prodotti con prezzi
 2. **Acquista vestito**: Aggiunta articoli al carrello
 3. **Visualizza carrello**: Riepilogo articoli selezionati e totale
-4. **Procedi al checkout**: Processo di acquisto completo
+4. **Procedi al pagamento**: Processo di acquisto completo
 5. **Visualizza stato ordini**: Storico e stato degli ordini effettuati
 
-## Processo di Checkout Dettagliato
+## Processo di Pagamento Dettagliato
 
 ### 1. Validazione Carrello
 - Verifica che il carrello non sia vuoto
@@ -132,31 +132,31 @@ Utilizzato per fornire un'interfaccia semplificata alle operazioni complesse del
 ### 4. Creazione Ordine
 - Genera ID univoco per l'ordine
 - Associa articoli, strategie e totale
-- Registra servizio notifiche come observer
+- Registra servizio notifiche come osservatore
 
-### 5. Processamento Pagamento
+### 5. Elaborazione Pagamento
 - Utilizza la strategia selezionata
-- In caso di successo, aggiorna stato a "PAID"
+- In caso di successo, aggiorna stato a "PAGATO"
 - Salva ordine nel database e nello storico cliente
 - Svuota il carrello
 
 ## Gestione Utenti
 
 ### Autenticazione
-- Login possibile con email o nickname
+- Accesso possibile con email o nickname
 - Password in chiaro (per semplicità demo)
-- Utente admin predefinito: email `admin@shop.com`, password `admin123`
+- Utente admin predefinito: email `admin@negozio.com`, password `admin123`
 
 ### Tipi di Utente
-- **Admin**: Accesso completo a gestione inventario e ordini
-- **Customer**: Accesso a shopping e gestione ordini personali
+- **Amministratore**: Accesso completo a gestione inventario e ordini
+- **Cliente**: Accesso a shopping e gestione ordini personali
 
 ## Gestione Inventario
 
 ### Articoli
 - Ogni articolo ha ID univoco, nome, tipologia e prezzo
 - Possibilità di sovrascrivere articoli esistenti (stesso ID)
-- Sconti applicati tramite Decorator Pattern
+- Sconti applicati tramite Pattern Decoratore
 
 ### Sconti
 - Percentuali comprese tra 10% e 80%
@@ -165,29 +165,29 @@ Utilizzato per fornire un'interfaccia semplificata alle operazioni complesse del
 
 ## Stati degli Ordini
 
-1. **PENDING**: Ordine creato ma non pagato
-2. **PAID**: Pagamento completato, in attesa di spedizione
-3. **SHIPPED**: Ordine spedito, in transito
-4. **DELIVERED**: Ordine consegnato (non implementato automaticamente)
+1. **IN_ATTESA**: Ordine creato ma non pagato
+2. **PAGATO**: Pagamento completato, in attesa di spedizione
+3. **SPEDITO**: Ordine spedito, in transito
+4. **CONSEGNATO**: Ordine consegnato (non implementato automaticamente)
 
 ## Notifiche
 
-### Sistema Observer
+### Sistema Osservatore
 - Ogni cambio di stato ordine genera notifica
 - Notifiche inviate all'email del cliente
-- Formato: " Notifica per [email]: Ordine [ID] aggiornato a: [STATO]"
+- Formato: "📧 Notifica per [email]: Ordine [ID] aggiornato a: [STATO]"
 
 ## Gestione Errori
 
-### Input Validation
+### Validazione Input
 - Controllo formato numerico per scelte menu
 - Gestione input non validi con messaggi di errore
 - Vincoli sui valori di sconto (10-80%)
 
-### Error Handling
+### Gestione Errori
 - Autenticazione fallita: messaggio "Credenziali non valide"
 - Articoli non trovati: messaggio "Vestito non trovato"
-- Carrello vuoto: impedisce checkout
+- Carrello vuoto: impedisce pagamento
 - Operazioni non valide: messaggi informativi
 
 ## Caratteristiche Tecniche
@@ -202,32 +202,26 @@ Utilizzato per fornire un'interfaccia semplificata alle operazioni complesse del
 - Formattazione prezzi con 2 decimali
 - Separazione chiara tra sezioni con separatori
 
-### Estensibilità
-- Facile aggiunta nuovi metodi di pagamento (implementare `PaymentStrategy`)
-- Facile aggiunta nuovi metodi di spedizione (implementare `ShippingStrategy`)
-- Possibilità di aggiungere nuovi tipi di decorator per articoli
-- Struttura modulare permette estensioni future
-
-
 ## Dati di Test
 ### Utente Amministratore Predefinito
-- **Email**: `admin@shop.com`
+- **Email**: `admin@negozio.com`
 - **Nickname**: `admin`
 - **Password**: `admin123`
 
 ### Esempio di Utilizzo
 1. Avvia l'applicazione
-2. Login come admin per aggiungere articoli
-3. Logout e registra nuovo cliente
-4. Login come cliente per effettuare acquisti
+2. Accedi come admin per aggiungere articoli
+3. Disconnettiti e registra nuovo cliente
+4. Accedi come cliente per effettuare acquisti
 5. Ritorna come admin per gestire spedizioni
 
 ## Considerazioni di Design
 
 ### Vantaggi dei Pattern Utilizzati
-- **Strategy**: Permette cambio algoritmi runtime
-- **Decorator**: Aggiunge funzionalità senza ereditarietà
+- **Strategia**: Permette cambio algoritmi a runtime
+- **Decoratore**: Aggiunge funzionalità senza ereditarietà
 - **Factory**: Disaccoppia creazione oggetti da utilizzo
-- **Observer**: Notifiche automatiche e disaccoppiate
+- **Osservatore**: Notifiche automatiche e disaccoppiate
 - **Singleton**: Garantisce coerenza dati globali
 - **Facade**: Semplifica interfaccia complessa
+
