@@ -17,7 +17,7 @@ class CreditCardPayment implements PaymentStrategy {
     
     @Override
     public boolean processPayment(double amount) {
-        System.out.println("Pagamento di €" + amount + " elaborato con carta di credito: " + cardNumber);
+        System.out.println("Pagamento di euro" + amount + " elaborato con carta di credito: " + cardNumber);
         return true;
     }
     
@@ -36,7 +36,7 @@ class PayPalPayment implements PaymentStrategy {
     
     @Override
     public boolean processPayment(double amount) {
-        System.out.println("Pagamento di €" + amount + " elaborato con PayPal: " + email);
+        System.out.println("Pagamento di euro" + amount + " elaborato con PayPal: " + email);
         return true;
     }
     
@@ -664,7 +664,7 @@ class EcommerceFacade {
                 User customer = database.getUser(order.getCustomerId());
                 System.out.println("Ordine: " + order.getOrderId() + 
                                  " - Cliente: " + customer.getNickname() + 
-                                 " - Totale: €" + String.format("%.2f", order.getTotal()));
+                                 " - Totale: euro" + String.format("%.2f", order.getTotal()));
             }
         }
     }
@@ -691,7 +691,7 @@ class EcommerceFacade {
         } else {
             for (ClothingItem item : inventory) {
                 System.out.println(item.getId() + " - " + item.getDescription() + 
-                                 " - €" + String.format("%.2f", item.getPrice()));
+                                 " - euro" + String.format("%.2f", item.getPrice()));
             }
         }
     }
@@ -705,7 +705,7 @@ class EcommerceFacade {
         } else {
             for (ClothingItem item : inventory) {
                 System.out.println(item.getId() + " - " + item.getDescription() + 
-                                 " - €" + String.format("%.2f", item.getPrice()));
+                                 " - euro" + String.format("%.2f", item.getPrice()));
             }
         }
     }
@@ -732,10 +732,10 @@ class EcommerceFacade {
         } else {
             double total = 0;
             for (ClothingItem item : cart) {
-                System.out.println(item.getDescription() + " - €" + String.format("%.2f", item.getPrice()));
+                System.out.println(item.getDescription() + " - euro" + String.format("%.2f", item.getPrice()));
                 total += item.getPrice();
             }
-            System.out.println("Totale: €" + String.format("%.2f", total));
+            System.out.println("Totale: euro" + String.format("%.2f", total));
         }
     }
     
@@ -803,7 +803,7 @@ class EcommerceFacade {
             
             System.out.println("Ordine completato con successo!");
             System.out.println("ID Ordine: " + orderId);
-            System.out.println("Totale pagato: €" + String.format("%.2f", finalTotal));
+            System.out.println("Totale pagato: euro" + String.format("%.2f", finalTotal));
         } else {
             System.out.println("Errore nel pagamento!");
         }
@@ -819,7 +819,7 @@ class EcommerceFacade {
             for (Order order : orders) {
                 System.out.println("Ordine: " + order.getOrderId() + 
                                  " - Stato: " + order.getStatus() + 
-                                 " - Totale: €" + String.format("%.2f", order.getTotal()));
+                                 " - Totale: euro" + String.format("%.2f", order.getTotal()));
             }
         }
     }
